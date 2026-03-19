@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberStats — киберспортивная платформа</title>
+    <!-- Google Fonts и Font Awesome для иконок -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* СБРОС И ПЕРЕМЕННЫЕ — красивое сочетание цветов */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Основная палитра — глубокий космос с неоновыми акцентами */
+            --bg-primary: #0A0F1C;        /* глубокий темно-синий фон */
+            --bg-secondary: #141B2B;       /* карточки, панели */
+            --bg-tertiary: #1E293B;        /* элементы навигации */
+            
+            --accent-primary: #6C5CE7;     /* основной фиолетово-синий */
+            --accent-secondary: #A463F5;    /* неоново-фиолетовый */
+            --accent-glow: #00D4FF;         /* неоново-голубой для акцентов */
+            
+            --gradient-1: linear-gradient(135deg, #6C5CE7 0%, #A463F5 100%);
+            --gradient-2: linear-gradient(135deg, #00D4FF 0%, #6C5CE7 100%);
+            
+            --text-primary: #FFFFFF;
+            --text-secondary: #B8C1E0;
+            --text-muted: #7F8AA8;
+            
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+            
+            --border-color: rgba(108, 92, 231, 0.2);
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(108, 92, 231, 0.1);
+            --glow: 0 0 20px rgba(108, 92, 231, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Глобальные стили */
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* Кнопки */
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* Карточки */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow);
+            border-color: var(--accent-primary);
+        }
+
+        /* Навигация */
+        .navbar {
+            background: rgba(20, 27, 43, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 32px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo i {
+            font-size: 32px;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            color: var(--accent-glow);
+        }
+
+        .nav-item.active {
+            color: var(--accent-glow);
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--bg-tertiary);
+            border-radius: 40px;
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-box i {
+            color: var(--text-muted);
+            margin-right: 8px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            outline: none;
+            width: 200px;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid var(--accent-glow);
+        }
+
+        /* Герой секция */
+        .hero {
+            padding: 48px 0;
+            background: radial-gradient(circle at 70% 50%, rgba(108, 92, 231, 0.15) 0%, transparent 50%);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .hero-title {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #B8C1E0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            color: var(--text-secondary);
+            font-size: 18px;
+            margin-bottom: 32px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .tournament-card {
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tournament-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-1);
+        }
+
+        /* Секция турниров */
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tournament-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .tournament-item {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tournament-item:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: var(--accent-primary);
+            box-shadow: var(--glow);
+        }
+
+        .tournament-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .tournament-game {
+            background: var(--gradient-1);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .prize-pool {
+            color: var(--accent-glow);
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .tournament-meta {
+            display: flex;
+            gap: 16px;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            margin: 16px 0;
+        }
+
+        .progress-fill {
+            width: 75%;
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Статистика игроков */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .player-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .player-card:hover {
+            transform: translateX(8px);
+            border-color: var(--accent-secondary);
+            background: linear-gradient(90deg, var(--bg-secondary), rgba(108, 92, 231, 0.1));
+        }
+
+        .player-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--accent-glow);
+        }
+
+        .player-info h4 {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .player-stats {
+            display: flex;
+            gap: 16px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .stat-value {
+            color: var(--accent-glow);
+            font-weight: 700;
+        }
+
+        /* LIVE матч */
+        .live-match {
+            background: linear-gradient(135deg, var(--bg-secondary), rgba(108, 92, 231, 0.2));
+            border-radius: 24px;
+            padding: 32px;
+            margin: 48px 0;
+            border: 1px solid var(--accent-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .live-match::before {
+            content: 'LIVE';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--danger);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 700;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .match-teams {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 48px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .team-name {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .team-score {
+            font-size: 48px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .vs {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+
+        /* Модальное окно (для демонстрации кликабельности) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--accent-primary);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h3 {
+            font-size: 24px;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .close-modal {
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            color: var(--text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 48px 0;
+            margin-top: 64px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 48px;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-col ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--accent-glow);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <span>CyberStats</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="#" class="nav-item active">Главная</a>
+                <a href="#" class="nav-item">Турниры</a>
+                <a href="#" class="nav-item">Матчи</a>
+                <a href="#" class="nav-item">Статистика</a>
+                <a href="#" class="nav-item">Новости</a>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Поиск игрока, команды...">
+                </div>
+                <div class="avatar" onclick="openModal()">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Герой секция -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div>
+                    <h1 class="hero-title">Следи за турнирами и статистикой в реальном времени</h1>
+                    <p class="hero-subtitle">Профессиональная платформа для киберспортивных турниров, анализа игроков и команд. Присоединяйся к сообществу!</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" onclick="openModal()">Создать турнир</button>
+                        <button class="btn btn-outline">Все турниры</button>
+                    </div>
+                </div>
+                <div class="tournament-card">
+                    <h3 style="margin-bottom: 16px; color: var(--accent-glow);">Cyber Cup 2024</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 24px;">Призовой фонд $50,000 • CS2 • 5x5</p>
+                    <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+                        <div>
+                            <div style="color: var(--text-muted); font-size: 12px;">Команды</div>
+                            <div style="font-size: 24px; font-weight: 700;">32/64</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--text-muted); font-size: 12px;">До старта</div>
+                            <div style="font-size: 24px; font-weight: 700;">3 дня</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="openModal()">Зарегистрироваться</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Активные турниры -->
+    <section class="container">
+        <div class="section-title">
+            <h2>Активные турниры</h2>
+            <a href="#" style="color: var(--accent-glow); text-decoration: none;">Смотреть все →</a>
+        </div>
+        <div class="tournament-grid">
+            <div class="tournament-item" onclick="openModal()">
+                <div class="tournament-header">
+                    <span class="tournament-game">Dota 2</span>
+                    <span class="prize-pool">$100k</span>
+                </div>
+                <h3>The International Qualifier</h3>
+                <div class="tournament-meta">
+                    <span><i class="far fa-calendar"></i> 20-25 мая</span>
+                    <span><i class="fas fa-users"></i> 16/32</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 50%;"></div>
+                </div>
+            </div>
+
+            <div class="tournament-item" onclick="openModal()">
+                <div class="tournament-header">
+                    <span class="tournament-game">CS2</span>
+                    <span class="prize-pool">$50k</span>
+                </div>
+                <h3>Cyber Cup 2024</h3>
+                <div class="tournament-meta">
+                    <span><i class="far fa-calendar"></i> 15-20 июня</span>
+                    <span><i class="fas fa-users"></i> 32/64</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 75%;"></div>
+                </div>
+            </div>
+
+            <div class="tournament-item" onclick="openModal()">
+                <div class="tournament-header">
+                    <span class="tournament-game">Valorant</span>
+                    <span class="prize-pool">$25k</span>
+                </div>
+                <h3>Radiant Open</h3>
+                <div class="tournament-meta">
+                    <span><i class="far fa-calendar"></i> 10-15 июля</span>
+                    <span><i class="fas fa-users"></i> 8/16</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 90%;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIVE матч -->
+    <section class="container">
+        <div class="live-match">
+            <div class="match-teams">
+                <div class="team">
+                    <div class="team-name">NAVI</div>
+                    <div class="team-score">13</div>
+                    <div style="color: var(--text-muted);">Украина</div>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <div class="team-name">G2</div>
+                    <div class="team-score">7</div>
+                    <div style="color: var(--text-muted);">Европа</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 24px;">
+                <span style="background: var(--bg-tertiary); padding: 8px 16px; border-radius: 40px; color: var(--accent-glow);">
+                    <i class="fas fa-circle" style="color: var(--danger); font-size: 10px; margin-right: 8px;"></i>
+                    Inferno • 12 раунд
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Топ игроков -->
+    <section class="container">
+        <div class="section-title">
+            <h2>Топ игроков по рейтингу</h2>
+            <a href="#" style="color: var(--accent-glow); text-decoration: none;">Все рейтинги →</a>
+        </div>
+        <div class="players-grid">
+            <div class="player-card" onclick="openModal()">
+                <div class="player-avatar">s1mple</div>
+                <div class="player-info">
+                    <h4>s1mple</h4>
+                    <div class="player-stats">
+                        <span>K/D <span class="stat-value">1.35</span></span>
+                        <span>HS <span class="stat-value">65%</span></span>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 12px;">NAVI • Снайпер</div>
+                </div>
+            </div>
+
+            <div class="player-card" onclick="openModal()">
+                <div class="player-avatar">Zywoo</div>
+                <div class="player-info">
+                    <h4>ZywOo</h4>
+                    <div class="player-stats">
+                        <span>K/D <span class="stat-value">1.32</span></span>
+                        <span>HS <span class="stat-value">62%</span></span>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 12px;">Vitality • Рифлер</div>
+                </div>
+            </div>
+
+            <div class="player-card" onclick="openModal()">
+                <div class="player-avatar">NiKo</div>
+                <div class="player-info">
+                    <h4>NiKo</h4>
+                    <div class="player-stats">
+                        <span>K/D <span class="stat-value">1.28</span></span>
+                        <span>HS <span class="stat-value">58%</span></span>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 12px;">G2 • Рифлер</div>
+                </div>
+            </div>
+
+            <div class="player-card" onclick="openModal()">
+                <div class="player-avatar">m0NESY</div>
+                <div class="player-info">
+                    <h4>m0NESY</h4>
+                    <div class="player-stats">
+                        <span>K/D <span class="stat-value">1.31</span></span>
+                        <span>HS <span class="stat-value">55%</span></span>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 12px;">G2 • Снайпер</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Модальное окно (для демонстрации кликабельности) -->
+    <div class="modal" id="registrationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Регистрация на турнир</h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="tournamentForm">
+                    <div class="form-group">
+                        <label>Выберите турнир</label>
+                        <select>
+                            <option>Cyber Cup 2024 (CS2) - $50,000</option>
+                            <option>The International Qualifier (Dota 2) - $100,000</option>
+                            <option>Radiant Open (Valorant) - $25,000</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Название команды</label>
+                        <input type="text" placeholder="Введите название команды">
+                    </div>
+                    <div class="form-group">
+                        <label>Состав (игроки через запятую)</label>
+                        <input type="text" placeholder="Никнеймы 5 игроков">
+                    </div>
+                    <div class="form-group">
+                        <label>Контактный email</label>
+                        <input type="email" placeholder="captain@team.gg">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="event.preventDefault(); alert('Заявка отправлена! Ожидайте подтверждения.'); closeModal();">
+                        Отправить заявку
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>CyberStats</h4>
+                    <ul>
+                        <li><a href="#">О платформе</a></li>
+                        <li><a href="#">Карьера</a></li>
+                        <li><a href="#">Партнеры</a></li>
+                        <li><a href="#">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Турниры</h4>
+                    <ul>
+                        <li><a href="#">Активные</a></li>
+                        <li><a href="#">Предстоящие</a></li>
+                        <li><a href="#">Завершенные</a></li>
+                        <li><a href="#">Создать турнир</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Статистика</h4>
+                    <ul>
+                        <li><a href="#">Игроки</a></li>
+                        <li><a href="#">Команды</a></li>
+                        <li><a href="#">Рейтинги</a></li>
+                        <li><a href="#">Сравнение</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Сообщество</h4>
+                    <ul>
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Twitch</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 48px; color: var(--text-muted);">
+                © 2024 CyberStats. Все права защищены.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function openModal() {
+            document.getElementById('registrationModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('registrationModal').classList.remove('active');
+        }
+
+        // Закрытие по клику вне модального окна
+        window.onclick = function(event) {
+            const modal = document.getElementById('registrationModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Анимация для карточек при наведении
+        document.querySelectorAll('.tournament-item, .player-card').forEach(item => {
+            item.addEventListener('click', function() {
+                // Добавляем небольшую вибрацию при клике (эффект нажатия)
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+            });
+        });
+
+        // Динамическое обновление LIVE индикатора
+        setInterval(() => {
+            const liveBadge = document.querySelector('.live-match::before');
+            // Имитация обновления счета (для демонстрации)
+            const scores = document.querySelectorAll('.team-score');
+            if (scores.length >= 2 && Math.random() > 0.7) {
+                // Рандомно обновляем счет для эффекта live
+                scores[0].textContent = Math.floor(Math.random() * 16);
+                scores[1].textContent = Math.floor(Math.random() * 10);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
